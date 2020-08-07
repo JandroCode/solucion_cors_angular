@@ -1,0 +1,26 @@
+
+	Para solucionar el problema de "cross origin not allowed" en angular ( Suele producirse cuando añades o modificacas información de la base de datos, para los listados
+no suele producirs a no ser que no tengas configurado el CORS en el servidor) es necesario crearse un archvio "proxy.conf.json" en la raíz edel proyecto(a la
+misma altura que el package.json) con este código que muestro a continuación
+
+
+{
+    "/api/*":{
+        "target": "http://localhost:8080",
+        "secure": false,
+        "changeOrigin":true
+
+    }
+}
+
+Las peticiones http en el service tandrán entonces una url diferenteya que el dominio del servidor ya se le está indicando en el "target" de este fichero.
+Es necesario que las peticiones http del service coincide la url con este "/api" indicado en este archichivo seguido del path específico de cada petición,
+por ejemplo, una petición a un backend con la url: 'http://localhost:8080/api/save' al final quedaría en un  ...http.get('/api/save') en el método del service
+que realiza la petición al backend.
+
+Además es necesario modificar el package.json para incluir este archivo en la configuración del proyecto en el script del start
+
+  "start": "ng serve --proxy-config proxy.conf.json",
+
+Muy importante ->>>> Para que lea la nueva configuración correctamente es necesario parar el servidor y arrancarlo con el comando "npm start" (!ojo! porque ya no es ng serve)
+
